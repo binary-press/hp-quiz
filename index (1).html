@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harry Potter Quiz · Battle of Hogwarts Day</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#F5EFE8}
+    .app{font-family:'Montserrat',sans-serif;background:#F5EFE8;min-height:100vh;padding:24px 20px}
+    .max-w{max-width:600px;margin:0 auto}
+    .screen{display:none}.screen.active{display:block}
+    .card{background:#fff;border-radius:20px;border:1.5px solid #EDE0D4;padding:24px 24px 20px;margin-bottom:14px}
+    .tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F7991C;margin-bottom:8px}
+    input[type=text],input[type=password]{display:block;width:100%;border:1.5px solid #EDE0D4;border-radius:12px;padding:12px 16px;font-family:'Montserrat',sans-serif;font-size:14px;color:#1a1a1a;background:#fff;outline:none;margin-top:8px}
+    input[type=text]:focus,input[type=password]:focus{border-color:#F7991C}
+    .btn{display:block;width:100%;border:none;border-radius:12px;padding:13px 20px;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px}
+    .btn-orange{background:#F7991C;color:#fff}.btn-orange:hover{background:#e08810}
+    .btn-orange:disabled{background:#d4b590;cursor:not-allowed}
+    .btn-dark{background:#1a1a1a;color:#fff}.btn-dark:hover{background:#333}
+    .btn-outline{background:#fff;color:#1a1a1a;border:1.5px solid #EDE0D4}.btn-outline:hover{border-color:#F7991C;color:#F7991C}
+    .back{background:none;border:none;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;color:#A09080;cursor:pointer;margin-bottom:16px;display:flex;align-items:center;gap:5px}
+    .back:hover{color:#F7991C}
+    .progress-bar{height:4px;background:#EDE0D4;border-radius:2px;margin:12px 0}
+    .progress-fill{height:4px;background:#F7991C;border-radius:2px;transition:width .4s}
+    .opt{width:100%;text-align:left;background:#fff;border:1.5px solid #EDE0D4;border-radius:14px;padding:13px 16px;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:500;color:#1a1a1a;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:12px;transition:border-color .15s,background .15s}
+    .opt:hover{border-color:#F7991C;background:#FFF8F0}
+    .opt.correct{background:#E8F7EF;border-color:#2D9B5A;color:#1a5c36;pointer-events:none}
+    .opt.wrong{background:#FDECEA;border-color:#E24B4A;color:#7a1a1a;pointer-events:none}
+    .opt.reveal{pointer-events:none}
+    .opt-ltr{width:28px;height:28px;border-radius:8px;background:#F5EFE8;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#C4A882;flex-shrink:0}
+    .opt.correct .opt-ltr{background:#2D9B5A;color:#fff}
+    .opt.wrong .opt-ltr{background:#E24B4A;color:#fff}
+    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    .stat-card{background:#F5EFE8;border-radius:12px;padding:14px 16px}
+    .stat-num{font-size:24px;font-weight:700;color:#1a1a1a}
+    .stat-lbl{font-size:11px;color:#A09080;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+    .p-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #F0E8DE;cursor:pointer}
+    .p-row:last-child{border-bottom:none}
+    .p-row:hover .p-name{color:#F7991C}
+    .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+    .badge-done{background:#E8F7EF;color:#1a5c36}
+    .badge-quit{background:#FDECEA;color:#7a1a1a}
+    .tabs{display:flex;gap:8px;margin-bottom:16px}
+    .tab{flex:1;background:#F5EFE8;border:none;border-radius:10px;padding:10px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;color:#A09080;cursor:pointer}
+    .tab.active{background:#F7991C;color:#fff}
+    .tab-body{display:none}.tab-body.active{display:block}
+    .bar-wrap{margin-bottom:14px}
+    .bar-label{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;display:flex;justify-content:space-between;gap:8px}
+    .bar-label span:first-child{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:80%}
+    .bar-track{height:8px;background:#EDE0D4;border-radius:4px;overflow:hidden}
+    .bar-fill{height:8px;background:#F7991C;border-radius:4px}
+    .bar-fill.g{background:#2D9B5A}
+    .ans-row{background:#F9F5F1;border-radius:10px;padding:10px 14px;margin-bottom:8px}
+    .logo-wrap{text-align:center;margin-bottom:20px;padding-top:4px;user-select:none}
+    .logo-bolt{font-size:36px;cursor:pointer;display:inline-block;transition:transform .1s}
+    .logo-bolt:active{transform:scale(.9)}
+    .hint-flash{font-size:11px;color:#F7991C;margin-top:6px;opacity:0;transition:opacity .3s;height:16px}
+    .admin-modal-bg{background:rgba(245,239,232,.97);border-radius:20px;padding:24px;margin-bottom:14px;border:1.5px solid #EDE0D4}
+    .victory-banner{background:linear-gradient(135deg,#1a1a1a 0%,#2d1a00 100%);border-radius:20px;padding:28px 24px;text-align:center;margin-bottom:14px;border:2px solid #F7991C}
+    .victory-title{font-size:20px;font-weight:700;color:#F7991C;line-height:1.35;margin:12px 0 8px}
+    .victory-sub{font-size:13px;color:#e8d5b7;line-height:1.7}
+    .victory-score{font-size:36px;font-weight:700;color:#fff;margin:12px 0 4px}
+    .victory-score-lbl{font-size:11px;color:#A09080;letter-spacing:.08em;text-transform:uppercase}
+    .swords{display:flex;align-items:center;justify-content:center;gap:4px;margin:8px 0}
+    .sword-emoji{font-size:24px;line-height:1}
+    .bolt-emoji{font-size:34px;line-height:1}
+    .divider-fancy{display:flex;align-items:center;gap:10px;margin:14px 0}
+    .divider-fancy::before,.divider-fancy::after{content:'';flex:1;height:1px;background:#F7991C;opacity:.3}
+    .divider-fancy span{font-size:13px;color:#F7991C}
+    .sync-status{font-size:11px;color:#A09080;text-align:center;margin-top:8px;min-height:14px}
+    .sync-status.error{color:#E24B4A}
+    .sync-status.ok{color:#2D9B5A}
+    .spinner{display:inline-block;width:12px;height:12px;border:2px solid #EDE0D4;border-top-color:#F7991C;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:6px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-overlay{position:fixed;inset:0;background:rgba(245,239,232,.85);display:flex;align-items:center;justify-content:center;z-index:100}
+    .loading-box{background:#fff;border-radius:16px;padding:20px 28px;border:1.5px solid #EDE0D4;font-size:14px;font-weight:600;color:#1a1a1a}
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+<div class="max-w">
+
+<!-- HOME -->
+<div class="screen active" id="s-home">
+  <div class="logo-wrap">
+    <div class="logo-bolt" id="logo-bolt" onclick="boltClick()">&#x26A1;</div>
+    <div class="tag" style="margin:4px 0 0">Battle of Hogwarts Day</div>
+    <div style="font-size:26px;font-weight:700;color:#1a1a1a;line-height:1.3">Harry Potter Quiz</div>
+    <div style="width:36px;height:3px;background:#F7991C;border-radius:2px;margin:10px auto"></div>
+    <div style="font-size:13px;color:#A09080">13 questions &middot; 4 answer choices</div>
+    <div class="hint-flash" id="hint-flash"></div>
+  </div>
+  <div class="card">
+    <div class="tag">Participant</div>
+    <div style="font-size:18px;font-weight:700;color:#1a1a1a">Take the Quiz</div>
+    <input type="text" id="player-name" placeholder="Enter your name" maxlength="40">
+    <button class="btn btn-orange" onclick="startQuiz()">Start &rarr;</button>
+  </div>
+  <div id="admin-modal" style="display:none">
+    <div class="admin-modal-bg">
+      <div class="tag" style="color:#888">Admin</div>
+      <div style="font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:4px">Organiser Panel</div>
+      <input type="password" id="admin-pass" placeholder="Password">
+      <button class="btn btn-dark" style="margin-top:10px" onclick="openAdmin()">Sign in &rarr;</button>
+      <button class="btn btn-outline" style="margin-top:6px" onclick="closeAdminModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="s-quiz">
+  <button class="back" onclick="confirmQuit()">&larr; Exit</button>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+    <div class="tag" style="margin:0" id="q-counter">1 / 13</div>
+    <div style="font-size:14px;font-weight:700;color:#1a1a1a" id="q-score-live">0 / 0</div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="q-prog" style="width:0%"></div></div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+      <div class="tag" style="margin:0" id="q-cat"></div>
+      <div id="q-diff-badge"></div>
+    </div>
+    <div style="font-size:16px;font-weight:600;color:#1a1a1a;line-height:1.55" id="q-text"></div>
+  </div>
+  <div id="q-opts"></div>
+  <button class="btn btn-orange" id="q-next" style="display:none" onclick="nextQ()">Next &rarr;</button>
+  <button class="btn" id="q-finish" style="display:none;background:#2D9B5A;color:#fff" onclick="finishQuiz()">Finish &#10003;</button>
+  <div class="sync-status" id="sync-status"></div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="s-result">
+  <div class="victory-banner">
+    <div class="swords">
+      <span class="sword-emoji">&#x2694;&#xFE0F;</span>
+      <span class="bolt-emoji">&#x26A1;&#xFE0F;</span>
+      <span class="sword-emoji">&#x2694;&#xFE0F;</span>
+    </div>
+    <div class="tag" style="color:#F7991C;margin-bottom:0">Battle of Hogwarts Day</div>
+    <div class="victory-title" id="res-title"></div>
+    <div class="victory-sub" id="res-sub"></div>
+    <div class="divider-fancy"><span>&#x2726;</span></div>
+    <div class="victory-score-lbl">Correct answers</div>
+    <div class="victory-score" id="res-score"></div>
+    <div class="progress-bar" style="margin:10px 0 4px"><div class="progress-fill" id="res-bar" style="width:0%"></div></div>
+    <div style="font-size:11px;color:#A09080;margin-top:6px" id="res-meta"></div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="tag">My Answers</div>
+    <div id="res-answers"></div>
+  </div>
+  <button class="btn btn-outline" onclick="goHome()">Back to Home</button>
+</div>
+
+<!-- ADMIN -->
+<div class="screen" id="s-admin">
+  <button class="back" onclick="goHome()">&larr; Exit Panel</button>
+  <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+    <div>
+      <div class="tag" style="color:#888">Admin Panel</div>
+      <div style="font-size:22px;font-weight:700;color:#1a1a1a">Quiz Analytics</div>
+      <div style="width:36px;height:3px;background:#F7991C;border-radius:2px;margin:10px 0 0"></div>
+    </div>
+    <button class="btn btn-outline" style="width:auto;margin:0;padding:10px 14px;font-size:12px" onclick="renderAdmin(true)">&#x21BB; Refresh</button>
+  </div>
+  <div class="stat-grid" id="admin-stats"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-size:11px;color:#A09080" id="admin-sync-info"></div>
+    <button style="background:none;border:none;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:#E24B4A;cursor:pointer" onclick="clearData()">Clear all data</button>
+  </div>
+  <div class="tabs">
+    <button class="tab active" id="tab-btn-p" onclick="switchTab('p')">Participants</button>
+    <button class="tab" id="tab-btn-q" onclick="switchTab('q')">By Question</button>
+  </div>
+  <div class="tab-body active" id="tab-p"><div class="card"><div id="p-list"></div></div></div>
+  <div class="tab-body" id="tab-q"><div class="card"><div id="q-analysis"></div></div></div>
+  <div id="detail-panel" style="display:none;margin-top:14px">
+    <div class="card">
+      <button class="back" onclick="closeDetail()">&larr; Back to list</button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div id="loading" class="loading-overlay" style="display:none"><div class="loading-box"><span class="spinner"></span><span id="loading-text">Loading…</span></div></div>
+
+<script>
+// ============================================================
+// CLOUD SYNC CONFIG — fill in these two values (see README.md)
+// ============================================================
+var CLOUD = {
+  BIN_ID:    "REPLACE_WITH_YOUR_BIN_ID",     // JSONBin bin ID
+  API_KEY:   "REPLACE_WITH_YOUR_API_KEY"     // JSONBin Master Key (X-Master-Key)
+};
+var PASS = "hp2024"; // admin password — change before sharing the link!
+// ============================================================
+
+var QS=[
+  {q:"What is the name of the three-headed dog guarding the trapdoor to the Philosopher's Stone?",opts:["Fluffy","Fenrir","Cerberus","Crusher"],ans:0,cat:"Magical Creatures",diff:1},
+  {q:"What is the name of the wizarding hospital in London?",opts:["St Mungo's Hospital","Merlin's Clinic","Dumbledore's Infirmary","Azkaban Medical"],ans:0,cat:"Places",diff:1},
+  {q:"Who was the first goblin Harry ever met at Gringotts?",opts:["Gornuk","Bogrod","Griphook","Ripnek"],ans:2,cat:"Characters",diff:1},
+  {q:"What is the name of Hagrid's giant half-brother?",opts:["Gromp","Grawp","Gruum","Grol"],ans:1,cat:"Characters",diff:2},
+  {q:"What is Hermione's middle name?",opts:["Jane","Rose","Jean","Anna"],ans:2,cat:"Characters",diff:2},
+  {q:"What is Nearly Headless Nick's full name?",opts:["Sir Nicholas de Mimsy-Porpington","Lord Nicholas de Blair","Sir Nicholas Vansittart","Baron Nicholas de Blair"],ans:0,cat:"Characters",diff:2},
+  {q:"Who did the house-elf Hokey work for?",opts:["The Malfoy family","Hepzibah Smith","The Black family","Ollivander"],ans:1,cat:"Characters",diff:2},
+  {q:"IN THE BOOK \u2014 who gave Harry gillyweed for the Triwizard Tournament?",opts:["Neville Longbottom","Hermione Granger","Charlie Weasley","Dobby"],ans:3,cat:"Plot",diff:2},
+  {q:"Which potion was Harry brewing in Slughorn's class in the sixth book?",opts:["Felix Felicis","Amortentia","Draught of Living Death","Veritaserum"],ans:2,cat:"Potions",diff:2},
+  {q:"Who is the author of the textbook 'Magical Drafts and Potions'?",opts:["Severus Snape","Lilias De la Tour","Arsenius Jigger","Horace Slughorn"],ans:2,cat:"Books",diff:3},
+  {q:"What is the core material of Fleur Delacour's wand?",opts:["Phoenix feather","Veela hair","Dragon heartstring","Unicorn tail hair"],ans:1,cat:"Magic",diff:3},
+  {q:"What is the key ingredient in the Draught of Living Death?",opts:["Mandrake root","Asphodel","Unicorn blood","Acromantula venom"],ans:1,cat:"Potions",diff:3},
+  {q:"What is the full name of the author of 'The Tales of Beedle the Bard'?",opts:["Beedle the Bard","Bardolph Beedle","Barnabas Beedle","Beedle Barnard"],ans:2,cat:"Books",diff:3}
+];
+
+var LTRS=["A","B","C","D"];
+var DIFF_COLORS=["","#2D9B5A","#F7991C","#E24B4A"];
+var DIFF_LABELS=["","Easy","Medium","Hard"];
+var player={name:"",currentQ:0,answers:[],score:0,answered:false,startTime:0};
+var boltClicks=0,boltTimer=null;
+var adminCache={results:[],lastFetch:0};
+
+// ---------- Cloud sync layer (JSONBin.io) ----------
+
+function isCloudConfigured(){
+  return CLOUD.BIN_ID && CLOUD.API_KEY
+    && CLOUD.BIN_ID.indexOf("REPLACE_WITH")===-1
+    && CLOUD.API_KEY.indexOf("REPLACE_WITH")===-1;
+}
+
+function showLoading(text){
+  document.getElementById('loading-text').textContent=text||'Loading…';
+  document.getElementById('loading').style.display='flex';
+}
+function hideLoading(){document.getElementById('loading').style.display='none';}
+
+function setSync(msg,cls){
+  var el=document.getElementById('sync-status');
+  if(!el)return;
+  el.textContent=msg||'';
+  el.className='sync-status'+(cls?' '+cls:'');
+}
+
+// Fetch all results from the cloud
+function cloudFetch(){
+  return fetch('https://api.jsonbin.io/v3/b/'+CLOUD.BIN_ID+'/latest',{
+    method:'GET',
+    headers:{'X-Master-Key':CLOUD.API_KEY,'X-Bin-Meta':'false'}
+  }).then(function(r){
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(function(data){
+    // JSONBin wraps the stored object in .record
+    var rec = (data && data.record) ? data.record : data;
+    if(rec && Array.isArray(rec.results))return rec.results;
+    if(Array.isArray(rec))return rec;
+    return [];
+  });
+}
+
+// Overwrite the whole bin with a new array of results
+function cloudSave(results){
+  return fetch('https://api.jsonbin.io/v3/b/'+CLOUD.BIN_ID,{
+    method:'PUT',
+    headers:{
+      'Content-Type':'application/json',
+      'X-Master-Key':CLOUD.API_KEY
+    },
+    body:JSON.stringify({results:results})
+  }).then(function(r){
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.json();
+  });
+}
+
+// Append a single result with retry-on-conflict: fetch latest, append, save
+function cloudAppend(newResult,attempt){
+  attempt=attempt||0;
+  return cloudFetch().then(function(list){
+    var updated=list.concat([newResult]);
+    return cloudSave(updated).then(function(){return updated;});
+  }).catch(function(err){
+    if(attempt<2){
+      return new Promise(function(res){setTimeout(res,400*(attempt+1));})
+        .then(function(){return cloudAppend(newResult,attempt+1);});
+    }
+    throw err;
+  });
+}
+
+// Local fallback (if the cloud isn't configured or is unreachable)
+function localGet(){try{return JSON.parse(localStorage.getItem('hp_results')||'[]')}catch(e){return[]}}
+function localSave(r){var a=localGet();a.push(r);localStorage.setItem('hp_results',JSON.stringify(a));}
+function localSaveAll(a){localStorage.setItem('hp_results',JSON.stringify(a));}
+
+// Queue of unsynced results (in case the network drops mid-quiz)
+function queueGet(){try{return JSON.parse(localStorage.getItem('hp_queue')||'[]')}catch(e){return[]}}
+function queuePush(r){var q=queueGet();q.push(r);localStorage.setItem('hp_queue',JSON.stringify(q));}
+function queueClear(){localStorage.removeItem('hp_queue');}
+
+// Try to flush queued results on page load
+function flushQueue(){
+  if(!isCloudConfigured())return Promise.resolve();
+  var q=queueGet();
+  if(!q.length)return Promise.resolve();
+  return cloudFetch().then(function(list){
+    var merged=list.concat(q);
+    return cloudSave(merged).then(function(){queueClear();});
+  }).catch(function(){/* keep queue for next time */});
+}
+
+// ---------- UI helpers ----------
+
+function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active')}
+function goHome(){show('s-home');document.getElementById('admin-modal').style.display='none';}
+
+function boltClick(){
+  boltClicks++;clearTimeout(boltTimer);
+  var flash=document.getElementById('hint-flash');
+  if(boltClicks===1){flash.textContent='\u2726';flash.style.opacity='1';}
+  if(boltClicks===2){flash.textContent='\u2726 \u2726';flash.style.opacity='1';}
+  if(boltClicks>=3){
+    boltClicks=0;flash.style.opacity='0';flash.textContent='';
+    document.getElementById('admin-modal').style.display='block';
+    document.getElementById('admin-pass').value='';
+    document.getElementById('admin-pass').focus();return;
+  }
+  boltTimer=setTimeout(function(){boltClicks=0;flash.style.opacity='0';},1200);
+}
+function closeAdminModal(){document.getElementById('admin-modal').style.display='none';boltClicks=0;}
+
+function startQuiz(){
+  var n=document.getElementById('player-name').value.trim();
+  if(!n){alert('Please enter your name');return;}
+  player={name:n,currentQ:0,answers:[],score:0,answered:false,startTime:Date.now()};
+  setSync('');
+  show('s-quiz');renderQ();
+}
+
+function renderQ(){
+  var q=QS[player.currentQ];
+  document.getElementById('q-counter').textContent=(player.currentQ+1)+' / '+QS.length;
+  document.getElementById('q-score-live').textContent=player.score+' / '+player.currentQ;
+  document.getElementById('q-prog').style.width=(player.currentQ/QS.length*100)+'%';
+  document.getElementById('q-cat').textContent=q.cat;
+  document.getElementById('q-diff-badge').innerHTML='<span style="font-size:11px;font-weight:700;color:'+DIFF_COLORS[q.diff]+'">'+('\u25CF'.repeat(q.diff))+'</span>';
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('q-next').style.display='none';
+  document.getElementById('q-finish').style.display='none';
+  player.answered=false;
+  var c=document.getElementById('q-opts');c.innerHTML='';
+  q.opts.forEach(function(o,i){
+    var b=document.createElement('button');b.className='opt';
+    b.innerHTML='<span class="opt-ltr">'+LTRS[i]+'</span><span>'+o+'</span>';
+    b.onclick=function(){answer(i)};c.appendChild(b);
+  });
+}
+
+function answer(i){
+  if(player.answered)return;
+  player.answered=true;
+  var q=QS[player.currentQ];
+  var ok=i===q.ans;
+  if(ok)player.score++;
+  player.answers.push({qIdx:player.currentQ,chosen:i,correct:ok});
+  document.getElementById('q-opts').querySelectorAll('.opt').forEach(function(b,j){
+    b.classList.add('reveal');
+    if(j===q.ans)b.classList.add('correct');
+    else if(j===i&&!ok)b.classList.add('wrong');
+  });
+  if(player.currentQ===QS.length-1)document.getElementById('q-finish').style.display='block';
+  else document.getElementById('q-next').style.display='block';
+}
+
+function nextQ(){player.currentQ++;renderQ();}
+
+function buildResult(completed){
+  return {
+    id:'r_'+Date.now()+'_'+Math.random().toString(36).slice(2,8),
+    name:player.name,
+    score:player.score,
+    total:QS.length,
+    answers:player.answers,
+    completed:completed,
+    date:new Date().toLocaleString('en-GB'),
+    dateISO:new Date().toISOString(),
+    duration:Math.round((Date.now()-player.startTime)/1000)
+  };
+}
+
+function persistResult(r){
+  // Always keep a local copy
+  localSave(r);
+  if(!isCloudConfigured())return Promise.resolve({mode:'local'});
+  setSync('Saving result…');
+  var finishBtn=document.getElementById('q-finish');
+  if(finishBtn)finishBtn.disabled=true;
+  return cloudAppend(r).then(function(){
+    setSync('Saved \u2713','ok');
+    return {mode:'cloud'};
+  }).catch(function(){
+    queuePush(r);
+    setSync('Saved offline — will sync later','error');
+    return {mode:'queued'};
+  }).then(function(res){
+    if(finishBtn)finishBtn.disabled=false;
+    return res;
+  });
+}
+
+function finishQuiz(){
+  var r=buildResult(true);
+  persistResult(r).then(function(){showResult(r);});
+}
+
+function confirmQuit(){
+  if(confirm('Exit the quiz? Your progress will not be saved.')){
+    if(player.answers.length>0){
+      var r=buildResult(false);
+      persistResult(r).then(function(){goHome();});
+    } else {
+      goHome();
+    }
+  }
+}
+
+function showResult(r){
+  show('s-result');
+  var s=r.score;
+  var pct=Math.round(s/r.total*100);
+  var title,sub;
+  if(s===r.total){
+    title='Hogwarts has won \u2014 and you were its greatest champion!';
+    sub='Your knowledge was the sharpest weapon of the light side. Every correct answer struck a blow against the darkness. Voldemort is defeated, and your name is written in Hogwarts\' chronicles in golden ink.';
+  } else if(s>=10){
+    title='Hogwarts has won \u2014 and you stood among its bravest!';
+    sub='Your contribution to the battle was immeasurable. You fought with precision, courage, and the spirit of a true witch or wizard. The forces of good have prevailed \u2014 and that victory is partly yours.';
+  } else if(s>=7){
+    title='Hogwarts has won \u2014 your battle was fierce and fearless!';
+    sub='The scars will heal, but the memory of your courage will endure. It wasn\'t easy \u2014 yet you held your ground until the very end. It is thanks to you that the light side claimed victory.';
+  } else {
+    title='Hogwarts has won \u2014 and every hand that helped made a difference!';
+    sub='At Hogwarts, no act of courage goes unnoticed, no matter how small. Even the humblest contribution in the battle against darkness is an act of bravery. It is thanks to you that the forces of good have triumphed.';
+  }
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-sub').textContent=sub;
+  document.getElementById('res-score').textContent=s+' / '+r.total;
+  document.getElementById('res-bar').style.width=pct+'%';
+  var mins=Math.floor(r.duration/60),secs=r.duration%60;
+  document.getElementById('res-meta').textContent=r.name+' \u00B7 '+r.date+' \u00B7 '+mins+'m '+secs+'s';
+  var el=document.getElementById('res-answers');el.innerHTML='';
+  r.answers.forEach(function(a){
+    var q=QS[a.qIdx];
+    var d=document.createElement('div');d.className='ans-row';
+    d.innerHTML='<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font-size:11px;font-weight:700;color:#A09080;text-transform:uppercase;letter-spacing:.06em">'+q.cat+'</span><span style="font-size:11px;font-weight:700;color:'+DIFF_COLORS[q.diff]+'">'+('\u25CF'.repeat(q.diff))+'</span></div><div style="font-weight:600;font-size:13px;color:#1a1a1a;margin-bottom:4px">'+q.q+'</div><div style="font-size:12px;color:'+(a.correct?'#2D9B5A':'#E24B4A')+'">'+(a.correct?'\u2713':'\u2717')+' '+q.opts[a.chosen]+(a.correct?'':' \u2192 '+q.opts[q.ans])+'</div>';
+    el.appendChild(d);
+  });
+}
+
+// ---------- Admin ----------
+
+function openAdmin(){
+  if(document.getElementById('admin-pass').value!==PASS){alert('Incorrect password');return;}
+  show('s-admin');
+  renderAdmin(true);
+}
+
+function renderAdmin(forceFetch){
+  if(!isCloudConfigured()){
+    adminCache.results=localGet();
+    drawAdmin(adminCache.results,'Local storage only (cloud not configured)');
+    return;
+  }
+  showLoading('Loading results…');
+  flushQueue().then(function(){
+    return cloudFetch();
+  }).then(function(list){
+    adminCache.results=list;
+    adminCache.lastFetch=Date.now();
+    hideLoading();
+    drawAdmin(list,'Synced '+new Date().toLocaleTimeString('en-GB'));
+  }).catch(function(err){
+    hideLoading();
+    var fallback=localGet();
+    adminCache.results=fallback;
+    drawAdmin(fallback,'Offline — showing local copy ('+(err.message||'error')+')');
+  });
+}
+
+function drawAdmin(results,syncInfo){
+  document.getElementById('admin-sync-info').textContent=syncInfo||'';
+  var done=results.filter(function(r){return r.completed});
+  var avg=done.length?(done.reduce(function(s,r){return s+r.score},0)/done.length).toFixed(1):'—';
+  var avgT=done.length?Math.round(done.reduce(function(s,r){return s+r.duration},0)/done.length):0;
+  var pctDone=results.length?Math.round(done.length/results.length*100):0;
+  document.getElementById('admin-stats').innerHTML=
+    '<div class="stat-card"><div class="stat-num">'+results.length+'</div><div class="stat-lbl">Started</div></div>'+
+    '<div class="stat-card"><div class="stat-num">'+done.length+' <span style="font-size:13px;color:#A09080">('+pctDone+'%)</span></div><div class="stat-lbl">Completed</div></div>'+
+    '<div class="stat-card"><div class="stat-num">'+avg+'</div><div class="stat-lbl">Avg score</div></div>'+
+    '<div class="stat-card"><div class="stat-num">'+(avgT?Math.floor(avgT/60)+'m '+avgT%60+'s':'—')+'</div><div class="stat-lbl">Avg time</div></div>';
+
+  var pl=document.getElementById('p-list');
+  if(!results.length){pl.innerHTML='<div style="color:#A09080;font-size:14px;text-align:center;padding:20px">No participants yet</div>';}
+  else{
+    pl.innerHTML='';
+    results.slice().reverse().forEach(function(r,i){
+      var idx=results.length-1-i;
+      var pct=Math.round(r.score/r.total*100);
+      var row=document.createElement('div');row.className='p-row';
+      row.onclick=function(){showDetail(idx)};
+      row.innerHTML='<div><div class="p-name" style="font-weight:600;font-size:14px;color:#1a1a1a;transition:color .15s">'+escapeHtml(r.name)+'</div><div style="font-size:11px;color:#A09080;margin-top:2px">'+r.date+'</div></div>'+
+        '<div style="display:flex;align-items:center;gap:8px"><div style="font-size:13px;font-weight:700;color:#1a1a1a">'+r.score+'/'+r.total+' <span style="font-weight:400;color:#A09080;font-size:12px">('+pct+'%)</span></div>'+
+        '<span class="badge '+(r.completed?'badge-done':'badge-quit')+'">'+(r.completed?'Completed':'Quit')+'</span></div>';
+      pl.appendChild(row);
+    });
+  }
+
+  var qa=document.getElementById('q-analysis');qa.innerHTML='';
+  QS.forEach(function(q,qi){
+    var att=results.filter(function(r){return r.answers && r.answers.find(function(a){return a.qIdx===qi})});
+    var cor=results.filter(function(r){return r.answers && r.answers.find(function(a){return a.qIdx===qi&&a.correct})}).length;
+    var pct=att.length?Math.round(cor/att.length*100):0;
+    var d=document.createElement('div');d.className='bar-wrap';
+    d.innerHTML='<div class="bar-label"><span>'+(qi+1)+'. '+escapeHtml(q.q.substring(0,50))+(q.q.length>50?'\u2026':'')+'</span><span style="color:'+DIFF_COLORS[q.diff]+';flex-shrink:0">'+pct+'%</span></div>'+
+      '<div class="bar-track"><div class="bar-fill '+(pct>=60?'g':'')+'" style="width:'+pct+'%"></div></div>'+
+      '<div style="font-size:11px;color:#A09080;margin-top:3px">'+cor+' of '+att.length+' correct \u00B7 '+DIFF_LABELS[q.diff]+'</div>';
+    qa.appendChild(d);
+  });
+}
+
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+function showDetail(idx){
+  var r=adminCache.results[idx];
+  if(!r)return;
+  document.getElementById('tab-p').classList.remove('active');
+  document.getElementById('tab-q').classList.remove('active');
+  document.querySelector('.tabs').style.display='none';
+  document.getElementById('detail-panel').style.display='block';
+  var pct=Math.round(r.score/r.total*100);
+  var cByD=[0,0,0,0],tByD=[0,0,0,0];
+  (r.answers||[]).forEach(function(a){var d=QS[a.qIdx].diff;tByD[d]++;if(a.correct)cByD[d]++;});
+  var diffHTML='';
+  [1,2,3].forEach(function(d){if(tByD[d]>0)diffHTML+='<span style="margin-right:12px;font-size:12px;color:'+DIFF_COLORS[d]+'">'+DIFF_LABELS[d]+': '+cByD[d]+'/'+tByD[d]+'</span>';});
+  var html='<div class="tag" style="color:#888">'+escapeHtml(r.name)+'</div>'+
+    '<div style="font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:4px">'+r.score+' / '+r.total+' \u00B7 '+pct+'%</div>'+
+    '<div style="margin-bottom:8px">'+diffHTML+'</div>'+
+    '<div style="font-size:12px;color:#A09080;margin-bottom:12px">'+r.date+' \u00B7 '+Math.floor(r.duration/60)+'m '+r.duration%60+'s \u00B7 '+(r.completed?'completed in full':'quit early')+'</div>'+
+    '<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div><div style="margin-top:16px">';
+  (r.answers||[]).forEach(function(a){
+    var q=QS[a.qIdx];
+    html+='<div class="ans-row"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-size:11px;font-weight:700;color:#A09080;text-transform:uppercase;letter-spacing:.06em">'+q.cat+'</span><span style="font-size:11px;color:'+DIFF_COLORS[q.diff]+'">'+('\u25CF'.repeat(q.diff))+'</span></div>'+
+      '<div style="font-weight:600;font-size:13px;color:#1a1a1a;margin-bottom:4px">'+escapeHtml(q.q)+'</div>'+
+      '<div style="font-size:12px;color:'+(a.correct?'#2D9B5A':'#E24B4A')+'">'+(a.correct?'\u2713':'\u2717')+' '+escapeHtml(q.opts[a.chosen])+(a.correct?'':' \u2192 '+escapeHtml(q.opts[q.ans]))+'</div></div>';
+  });
+  html+='</div>';
+  document.getElementById('detail-content').innerHTML=html;
+}
+
+function closeDetail(){
+  document.getElementById('detail-panel').style.display='none';
+  document.querySelector('.tabs').style.display='flex';
+  document.getElementById('tab-p').classList.add('active');
+  document.getElementById('tab-btn-p').classList.add('active');
+  document.getElementById('tab-btn-q').classList.remove('active');
+}
+function switchTab(t){
+  ['p','q'].forEach(function(id){
+    document.getElementById('tab-'+id).classList.toggle('active',id===t);
+    document.getElementById('tab-btn-'+id).classList.toggle('active',id===t);
+  });
+}
+
+function clearData(){
+  if(!confirm('Delete ALL results (cloud + local)? This cannot be undone.'))return;
+  localStorage.removeItem('hp_results');
+  localStorage.removeItem('hp_queue');
+  if(!isCloudConfigured()){renderAdmin();return;}
+  showLoading('Clearing cloud…');
+  cloudSave([]).then(function(){
+    hideLoading();renderAdmin(true);
+  }).catch(function(err){
+    hideLoading();
+    alert('Local cleared, but cloud failed: '+(err.message||'unknown error'));
+    renderAdmin();
+  });
+}
+
+// Try to flush any offline-queued results when the app loads
+flushQueue();
+</script>
+
+</body>
+</html>
