@@ -2,18 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F5EFE8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>Harry Potter Quiz · Battle of Hogwarts Day</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{background:#F5EFE8}
-    .app{font-family:'Montserrat',sans-serif;background:#F5EFE8;min-height:100vh;padding:24px 20px}
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    html{-webkit-text-size-adjust:100%}
+    body{background:#F5EFE8;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden}
+    .app{font-family:'Montserrat',sans-serif;background:#F5EFE8;min-height:100vh;min-height:100dvh;padding:24px 20px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
     .max-w{max-width:600px;margin:0 auto}
+    button{-webkit-appearance:none;appearance:none;touch-action:manipulation}
     .screen{display:none}.screen.active{display:block}
     .card{background:#fff;border-radius:20px;border:1.5px solid #EDE0D4;padding:24px 24px 20px;margin-bottom:14px}
     .tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F7991C;margin-bottom:8px}
-    input[type=text],input[type=password]{display:block;width:100%;border:1.5px solid #EDE0D4;border-radius:12px;padding:12px 16px;font-family:'Montserrat',sans-serif;font-size:14px;color:#1a1a1a;background:#fff;outline:none;margin-top:8px}
+    input[type=text],input[type=password]{display:block;width:100%;border:1.5px solid #EDE0D4;border-radius:12px;padding:12px 16px;font-family:'Montserrat',sans-serif;font-size:16px;color:#1a1a1a;background:#fff;outline:none;margin-top:8px;-webkit-appearance:none;appearance:none}
     input[type=text]:focus,input[type=password]:focus{border-color:#F7991C}
     .btn{display:block;width:100%;border:none;border-radius:12px;padding:13px 20px;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px}
     .btn-orange{background:#F7991C;color:#fff}.btn-orange:hover{background:#e08810}
@@ -24,8 +30,9 @@
     .back:hover{color:#F7991C}
     .progress-bar{height:4px;background:#EDE0D4;border-radius:2px;margin:12px 0}
     .progress-fill{height:4px;background:#F7991C;border-radius:2px;transition:width .4s}
-    .opt{width:100%;text-align:left;background:#fff;border:1.5px solid #EDE0D4;border-radius:14px;padding:13px 16px;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:500;color:#1a1a1a;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:12px;transition:border-color .15s,background .15s}
+    .opt{width:100%;text-align:left;background:#fff;border:1.5px solid #EDE0D4;border-radius:14px;padding:13px 16px;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:500;color:#1a1a1a;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:12px;transition:border-color .15s,background .15s,transform .1s;min-height:52px}
     .opt:hover{border-color:#F7991C;background:#FFF8F0}
+    .opt:active{transform:scale(.98)}
     .opt.correct{background:#E8F7EF;border-color:#2D9B5A;color:#1a5c36;pointer-events:none}
     .opt.wrong{background:#FDECEA;border-color:#E24B4A;color:#7a1a1a;pointer-events:none}
     .opt.reveal{pointer-events:none}
@@ -76,6 +83,55 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     .loading-overlay{position:fixed;inset:0;background:rgba(245,239,232,.85);display:flex;align-items:center;justify-content:center;z-index:100}
     .loading-box{background:#fff;border-radius:16px;padding:20px 28px;border:1.5px solid #EDE0D4;font-size:14px;font-weight:600;color:#1a1a1a}
+    @media (max-width:640px){
+      .app{padding:16px 14px;padding-top:max(16px,env(safe-area-inset-top));padding-bottom:max(16px,env(safe-area-inset-bottom))}
+      .card{padding:20px 18px 18px;border-radius:18px;margin-bottom:12px}
+      .logo-wrap{margin-bottom:16px}
+      .logo-bolt{font-size:32px}
+      .victory-banner{padding:24px 18px;border-radius:18px}
+      .victory-title{font-size:18px;line-height:1.4}
+      .victory-sub{font-size:12.5px;line-height:1.65}
+      .victory-score{font-size:32px}
+      .stat-grid{gap:8px}
+      .stat-card{padding:12px 14px}
+      .stat-num{font-size:22px}
+      .admin-modal-bg{padding:20px 18px}
+    }
+    @media (max-width:420px){
+      .app{padding:14px 12px}
+      .card{padding:18px 16px 16px;border-radius:16px}
+      .opt{padding:12px 14px;gap:10px;min-height:50px;font-size:14px}
+      .opt-ltr{width:26px;height:26px;font-size:11px;border-radius:7px}
+      .btn{padding:14px 18px;font-size:14px;min-height:48px}
+      .back{padding:8px 0;min-height:36px}
+      .logo-bolt{font-size:30px}
+      .tabs{gap:6px}
+      .tab{padding:10px 6px;font-size:12px}
+      .victory-title{font-size:17px}
+      .victory-score{font-size:30px}
+      .swords{gap:3px}
+      .sword-emoji{font-size:22px}
+      .bolt-emoji{font-size:30px}
+      .stat-num{font-size:20px}
+      .stat-lbl{font-size:10px}
+      .ans-row{padding:9px 12px}
+      #s-home .logo-wrap > div:nth-child(3){font-size:22px !important}
+    }
+    @media (max-width:360px){
+      .app{padding:12px 10px}
+      .card{padding:16px 14px 14px}
+      .opt{padding:11px 12px;font-size:13.5px}
+      .tab{font-size:11px;padding:9px 4px}
+      #q-counter,#q-score-live{font-size:12px}
+    }
+    @media (hover:none){
+      .opt:hover{border-color:#EDE0D4;background:#fff}
+      .btn-orange:hover{background:#F7991C}
+      .btn-dark:hover{background:#1a1a1a}
+      .btn-outline:hover{border-color:#EDE0D4;color:#1a1a1a}
+      .back:hover{color:#A09080}
+      .p-row:hover .p-name{color:#1a1a1a}
+    }
   </style>
 </head>
 <body>
@@ -95,14 +151,14 @@
   <div class="card">
     <div class="tag">Participant</div>
     <div style="font-size:18px;font-weight:700;color:#1a1a1a">Take the Quiz</div>
-    <input type="text" id="player-name" placeholder="Enter your name" maxlength="40">
+    <input type="text" id="player-name" placeholder="Enter your Name and Surname" maxlength="60" autocomplete="name" autocapitalize="words" enterkeyhint="go">
     <button class="btn btn-orange" onclick="startQuiz()">Start &rarr;</button>
   </div>
   <div id="admin-modal" style="display:none">
     <div class="admin-modal-bg">
       <div class="tag" style="color:#888">Admin</div>
       <div style="font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:4px">Organiser Panel</div>
-      <input type="password" id="admin-pass" placeholder="Password">
+      <input type="password" id="admin-pass" placeholder="Password" autocomplete="current-password" enterkeyhint="go">
       <button class="btn btn-dark" style="margin-top:10px" onclick="openAdmin()">Sign in &rarr;</button>
       <button class="btn btn-outline" style="margin-top:6px" onclick="closeAdminModal()">Cancel</button>
     </div>
@@ -187,18 +243,14 @@
 </div>
 </div>
 
-<div id="loading" class="loading-overlay" style="display:none"><div class="loading-box"><span class="spinner"></span><span id="loading-text">Loading…</span></div></div>
+<div id="loading" class="loading-overlay" style="display:none"><div class="loading-box"><span class="spinner"></span><span id="loading-text">Loading&#x2026;</span></div></div>
 
 <script>
-// ============================================================
-// CLOUD SYNC CONFIG — fill in these two values (see README.md)
-// ============================================================
 var CLOUD = {
-  BIN_ID:    "69e901d8856a6821895ff255",     // JSONBin bin ID
-  API_KEY:   "$2a$10$lc9TkQGRQiOznoPVuTVEDujpIMvyccrIVYh0NCL7uZrYONX.GLRmS"     // JSONBin Master Key (X-Master-Key)
+  BIN_ID:    "69e901d8856a6821895ff255",
+  API_KEY:   "$2a$10$lc9TkQGRQiOznoPVuTVEDujpIMvyccrIVYh0NCL7uZrYONX.GLRmS"
 };
-var PASS = "hp2024"; // admin password — change before sharing the link!
-// ============================================================
+var PASS = "hp2024";
 
 var QS=[
   {q:"What is the name of the three-headed dog guarding the trapdoor to the Philosopher's Stone?",opts:["Fluffy","Fenrir","Cerberus","Crusher"],ans:0,cat:"Magical Creatures",diff:1},
@@ -223,98 +275,39 @@ var player={name:"",currentQ:0,answers:[],score:0,answered:false,startTime:0};
 var boltClicks=0,boltTimer=null;
 var adminCache={results:[],lastFetch:0};
 
-// ---------- Cloud sync layer (JSONBin.io) ----------
-
 function isCloudConfigured(){
-  return CLOUD.BIN_ID && CLOUD.API_KEY
-    && CLOUD.BIN_ID.indexOf("REPLACE_WITH")===-1
-    && CLOUD.API_KEY.indexOf("REPLACE_WITH")===-1;
+  return CLOUD.BIN_ID&&CLOUD.API_KEY&&CLOUD.BIN_ID.indexOf("REPLACE_WITH")===-1&&CLOUD.API_KEY.indexOf("REPLACE_WITH")===-1;
 }
-
-function showLoading(text){
-  document.getElementById('loading-text').textContent=text||'Loading…';
-  document.getElementById('loading').style.display='flex';
-}
+function showLoading(text){document.getElementById('loading-text').textContent=text||'Loading\u2026';document.getElementById('loading').style.display='flex';}
 function hideLoading(){document.getElementById('loading').style.display='none';}
+function setSync(msg,cls){var el=document.getElementById('sync-status');if(!el)return;el.textContent=msg||'';el.className='sync-status'+(cls?' '+cls:'');}
 
-function setSync(msg,cls){
-  var el=document.getElementById('sync-status');
-  if(!el)return;
-  el.textContent=msg||'';
-  el.className='sync-status'+(cls?' '+cls:'');
-}
-
-// Fetch all results from the cloud
 function cloudFetch(){
-  return fetch('https://api.jsonbin.io/v3/b/'+CLOUD.BIN_ID+'/latest',{
-    method:'GET',
-    headers:{'X-Master-Key':CLOUD.API_KEY,'X-Bin-Meta':'false'}
-  }).then(function(r){
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    return r.json();
-  }).then(function(data){
-    // JSONBin wraps the stored object in .record
-    var rec = (data && data.record) ? data.record : data;
-    if(rec && Array.isArray(rec.results))return rec.results;
-    if(Array.isArray(rec))return rec;
-    return [];
-  });
+  return fetch('https://api.jsonbin.io/v3/b/'+CLOUD.BIN_ID+'/latest',{method:'GET',headers:{'X-Master-Key':CLOUD.API_KEY,'X-Bin-Meta':'false'}})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(data){var rec=(data&&data.record)?data.record:data;if(rec&&Array.isArray(rec.results))return rec.results;if(Array.isArray(rec))return rec;return[];});
 }
-
-// Overwrite the whole bin with a new array of results
 function cloudSave(results){
-  return fetch('https://api.jsonbin.io/v3/b/'+CLOUD.BIN_ID,{
-    method:'PUT',
-    headers:{
-      'Content-Type':'application/json',
-      'X-Master-Key':CLOUD.API_KEY
-    },
-    body:JSON.stringify({results:results})
-  }).then(function(r){
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    return r.json();
-  });
+  return fetch('https://api.jsonbin.io/v3/b/'+CLOUD.BIN_ID,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':CLOUD.API_KEY},body:JSON.stringify({results:results})})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});
 }
-
-// Append a single result with retry-on-conflict: fetch latest, append, save
 function cloudAppend(newResult,attempt){
   attempt=attempt||0;
-  return cloudFetch().then(function(list){
-    var updated=list.concat([newResult]);
-    return cloudSave(updated).then(function(){return updated;});
-  }).catch(function(err){
-    if(attempt<2){
-      return new Promise(function(res){setTimeout(res,400*(attempt+1));})
-        .then(function(){return cloudAppend(newResult,attempt+1);});
-    }
-    throw err;
-  });
+  return cloudFetch().then(function(list){return cloudSave(list.concat([newResult])).then(function(){return list.concat([newResult]);});})
+    .catch(function(err){if(attempt<2)return new Promise(function(res){setTimeout(res,400*(attempt+1));}).then(function(){return cloudAppend(newResult,attempt+1);});throw err;});
 }
-
-// Local fallback (if the cloud isn't configured or is unreachable)
 function localGet(){try{return JSON.parse(localStorage.getItem('hp_results')||'[]')}catch(e){return[]}}
 function localSave(r){var a=localGet();a.push(r);localStorage.setItem('hp_results',JSON.stringify(a));}
-function localSaveAll(a){localStorage.setItem('hp_results',JSON.stringify(a));}
-
-// Queue of unsynced results (in case the network drops mid-quiz)
 function queueGet(){try{return JSON.parse(localStorage.getItem('hp_queue')||'[]')}catch(e){return[]}}
 function queuePush(r){var q=queueGet();q.push(r);localStorage.setItem('hp_queue',JSON.stringify(q));}
 function queueClear(){localStorage.removeItem('hp_queue');}
-
-// Try to flush queued results on page load
 function flushQueue(){
   if(!isCloudConfigured())return Promise.resolve();
-  var q=queueGet();
-  if(!q.length)return Promise.resolve();
-  return cloudFetch().then(function(list){
-    var merged=list.concat(q);
-    return cloudSave(merged).then(function(){queueClear();});
-  }).catch(function(){/* keep queue for next time */});
+  var q=queueGet();if(!q.length)return Promise.resolve();
+  return cloudFetch().then(function(list){return cloudSave(list.concat(q)).then(function(){queueClear();});}).catch(function(){});
 }
 
-// ---------- UI helpers ----------
-
-function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active')}
+function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active');}
 function goHome(){show('s-home');document.getElementById('admin-modal').style.display='none';}
 
 function boltClick(){
@@ -322,12 +315,7 @@ function boltClick(){
   var flash=document.getElementById('hint-flash');
   if(boltClicks===1){flash.textContent='\u2726';flash.style.opacity='1';}
   if(boltClicks===2){flash.textContent='\u2726 \u2726';flash.style.opacity='1';}
-  if(boltClicks>=3){
-    boltClicks=0;flash.style.opacity='0';flash.textContent='';
-    document.getElementById('admin-modal').style.display='block';
-    document.getElementById('admin-pass').value='';
-    document.getElementById('admin-pass').focus();return;
-  }
+  if(boltClicks>=3){boltClicks=0;flash.style.opacity='0';flash.textContent='';document.getElementById('admin-modal').style.display='block';document.getElementById('admin-pass').value='';document.getElementById('admin-pass').focus();return;}
   boltTimer=setTimeout(function(){boltClicks=0;flash.style.opacity='0';},1200);
 }
 function closeAdminModal(){document.getElementById('admin-modal').style.display='none';boltClicks=0;}
@@ -336,8 +324,7 @@ function startQuiz(){
   var n=document.getElementById('player-name').value.trim();
   if(!n){alert('Please enter your name');return;}
   player={name:n,currentQ:0,answers:[],score:0,answered:false,startTime:Date.now()};
-  setSync('');
-  show('s-quiz');renderQ();
+  setSync('');show('s-quiz');renderQ();
 }
 
 function renderQ(){
@@ -352,25 +339,16 @@ function renderQ(){
   document.getElementById('q-finish').style.display='none';
   player.answered=false;
   var c=document.getElementById('q-opts');c.innerHTML='';
-  q.opts.forEach(function(o,i){
-    var b=document.createElement('button');b.className='opt';
-    b.innerHTML='<span class="opt-ltr">'+LTRS[i]+'</span><span>'+o+'</span>';
-    b.onclick=function(){answer(i)};c.appendChild(b);
-  });
+  q.opts.forEach(function(o,i){var b=document.createElement('button');b.className='opt';b.innerHTML='<span class="opt-ltr">'+LTRS[i]+'</span><span>'+o+'</span>';b.onclick=function(){answer(i)};c.appendChild(b);});
 }
 
 function answer(i){
   if(player.answered)return;
   player.answered=true;
-  var q=QS[player.currentQ];
-  var ok=i===q.ans;
+  var q=QS[player.currentQ];var ok=i===q.ans;
   if(ok)player.score++;
   player.answers.push({qIdx:player.currentQ,chosen:i,correct:ok});
-  document.getElementById('q-opts').querySelectorAll('.opt').forEach(function(b,j){
-    b.classList.add('reveal');
-    if(j===q.ans)b.classList.add('correct');
-    else if(j===i&&!ok)b.classList.add('wrong');
-  });
+  document.getElementById('q-opts').querySelectorAll('.opt').forEach(function(b,j){b.classList.add('reveal');if(j===q.ans)b.classList.add('correct');else if(j===i&&!ok)b.classList.add('wrong');});
   if(player.currentQ===QS.length-1)document.getElementById('q-finish').style.display='block';
   else document.getElementById('q-next').style.display='block';
 }
@@ -378,73 +356,35 @@ function answer(i){
 function nextQ(){player.currentQ++;renderQ();}
 
 function buildResult(completed){
-  return {
-    id:'r_'+Date.now()+'_'+Math.random().toString(36).slice(2,8),
-    name:player.name,
-    score:player.score,
-    total:QS.length,
-    answers:player.answers,
-    completed:completed,
-    date:new Date().toLocaleString('en-GB'),
-    dateISO:new Date().toISOString(),
-    duration:Math.round((Date.now()-player.startTime)/1000)
-  };
+  return {id:'r_'+Date.now()+'_'+Math.random().toString(36).slice(2,8),name:player.name,score:player.score,total:QS.length,answers:player.answers,completed:completed,date:new Date().toLocaleString('en-GB'),dateISO:new Date().toISOString(),duration:Math.round((Date.now()-player.startTime)/1000)};
 }
 
 function persistResult(r){
-  // Always keep a local copy
   localSave(r);
   if(!isCloudConfigured())return Promise.resolve({mode:'local'});
-  setSync('Saving result…');
-  var finishBtn=document.getElementById('q-finish');
-  if(finishBtn)finishBtn.disabled=true;
-  return cloudAppend(r).then(function(){
-    setSync('Saved \u2713','ok');
-    return {mode:'cloud'};
-  }).catch(function(){
-    queuePush(r);
-    setSync('Saved offline — will sync later','error');
-    return {mode:'queued'};
-  }).then(function(res){
-    if(finishBtn)finishBtn.disabled=false;
-    return res;
-  });
+  setSync('Saving result\u2026');
+  var finishBtn=document.getElementById('q-finish');if(finishBtn)finishBtn.disabled=true;
+  return cloudAppend(r).then(function(){setSync('Saved \u2713','ok');return{mode:'cloud'};})
+    .catch(function(){queuePush(r);setSync('Saved offline \u2014 will sync later','error');return{mode:'queued'};})
+    .then(function(res){if(finishBtn)finishBtn.disabled=false;return res;});
 }
 
-function finishQuiz(){
-  var r=buildResult(true);
-  persistResult(r).then(function(){showResult(r);});
-}
+function finishQuiz(){var r=buildResult(true);persistResult(r).then(function(){showResult(r);});}
 
 function confirmQuit(){
   if(confirm('Exit the quiz? Your progress will not be saved.')){
-    if(player.answers.length>0){
-      var r=buildResult(false);
-      persistResult(r).then(function(){goHome();});
-    } else {
-      goHome();
-    }
+    if(player.answers.length>0){var r=buildResult(false);persistResult(r).then(function(){goHome();});}
+    else{goHome();}
   }
 }
 
 function showResult(r){
   show('s-result');
-  var s=r.score;
-  var pct=Math.round(s/r.total*100);
-  var title,sub;
-  if(s===r.total){
-    title='Hogwarts has won \u2014 and you were its greatest champion!';
-    sub='Your knowledge was the sharpest weapon of the light side. Every correct answer struck a blow against the darkness. Voldemort is defeated, and your name is written in Hogwarts\' chronicles in golden ink.';
-  } else if(s>=10){
-    title='Hogwarts has won \u2014 and you stood among its bravest!';
-    sub='Your contribution to the battle was immeasurable. You fought with precision, courage, and the spirit of a true witch or wizard. The forces of good have prevailed \u2014 and that victory is partly yours.';
-  } else if(s>=7){
-    title='Hogwarts has won \u2014 your battle was fierce and fearless!';
-    sub='The scars will heal, but the memory of your courage will endure. It wasn\'t easy \u2014 yet you held your ground until the very end. It is thanks to you that the light side claimed victory.';
-  } else {
-    title='Hogwarts has won \u2014 and every hand that helped made a difference!';
-    sub='At Hogwarts, no act of courage goes unnoticed, no matter how small. Even the humblest contribution in the battle against darkness is an act of bravery. It is thanks to you that the forces of good have triumphed.';
-  }
+  var s=r.score,pct=Math.round(s/r.total*100),title,sub;
+  if(s===r.total){title='Hogwarts has won \u2014 and you were its greatest champion!';sub='Your knowledge was the sharpest weapon of the light side. Every correct answer struck a blow against the darkness. Voldemort is defeated, and your name is written in Hogwarts\' chronicles in golden ink.';}
+  else if(s>=10){title='Hogwarts has won \u2014 and you stood among its bravest!';sub='Your contribution to the battle was immeasurable. You fought with precision, courage, and the spirit of a true witch or wizard. The forces of good have prevailed \u2014 and that victory is partly yours.';}
+  else if(s>=7){title='Hogwarts has won \u2014 your battle was fierce and fearless!';sub='The scars will heal, but the memory of your courage will endure. It wasn\'t easy \u2014 yet you held your ground until the very end. It is thanks to you that the light side claimed victory.';}
+  else{title='Hogwarts has won \u2014 and every hand that helped made a difference!';sub='At Hogwarts, no act of courage goes unnoticed, no matter how small. Even the humblest contribution in the battle against darkness is an act of bravery. It is thanks to you that the forces of good have triumphed.';}
   document.getElementById('res-title').textContent=title;
   document.getElementById('res-sub').textContent=sub;
   document.getElementById('res-score').textContent=s+' / '+r.total;
@@ -452,42 +392,16 @@ function showResult(r){
   var mins=Math.floor(r.duration/60),secs=r.duration%60;
   document.getElementById('res-meta').textContent=r.name+' \u00B7 '+r.date+' \u00B7 '+mins+'m '+secs+'s';
   var el=document.getElementById('res-answers');el.innerHTML='';
-  r.answers.forEach(function(a){
-    var q=QS[a.qIdx];
-    var d=document.createElement('div');d.className='ans-row';
-    d.innerHTML='<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font-size:11px;font-weight:700;color:#A09080;text-transform:uppercase;letter-spacing:.06em">'+q.cat+'</span><span style="font-size:11px;font-weight:700;color:'+DIFF_COLORS[q.diff]+'">'+('\u25CF'.repeat(q.diff))+'</span></div><div style="font-weight:600;font-size:13px;color:#1a1a1a;margin-bottom:4px">'+q.q+'</div><div style="font-size:12px;color:'+(a.correct?'#2D9B5A':'#E24B4A')+'">'+(a.correct?'\u2713':'\u2717')+' '+q.opts[a.chosen]+(a.correct?'':' \u2192 '+q.opts[q.ans])+'</div>';
-    el.appendChild(d);
-  });
+  r.answers.forEach(function(a){var q=QS[a.qIdx];var d=document.createElement('div');d.className='ans-row';d.innerHTML='<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font-size:11px;font-weight:700;color:#A09080;text-transform:uppercase;letter-spacing:.06em">'+q.cat+'</span><span style="font-size:11px;font-weight:700;color:'+DIFF_COLORS[q.diff]+'">'+('\u25CF'.repeat(q.diff))+'</span></div><div style="font-weight:600;font-size:13px;color:#1a1a1a;margin-bottom:4px">'+q.q+'</div><div style="font-size:12px;color:'+(a.correct?'#2D9B5A':'#E24B4A')+'">'+(a.correct?'\u2713':'\u2717')+' '+q.opts[a.chosen]+(a.correct?'':' \u2192 '+q.opts[q.ans])+'</div>';el.appendChild(d);});
 }
 
-// ---------- Admin ----------
-
-function openAdmin(){
-  if(document.getElementById('admin-pass').value!==PASS){alert('Incorrect password');return;}
-  show('s-admin');
-  renderAdmin(true);
-}
+function openAdmin(){if(document.getElementById('admin-pass').value!==PASS){alert('Incorrect password');return;}show('s-admin');renderAdmin(true);}
 
 function renderAdmin(forceFetch){
-  if(!isCloudConfigured()){
-    adminCache.results=localGet();
-    drawAdmin(adminCache.results,'Local storage only (cloud not configured)');
-    return;
-  }
-  showLoading('Loading results…');
-  flushQueue().then(function(){
-    return cloudFetch();
-  }).then(function(list){
-    adminCache.results=list;
-    adminCache.lastFetch=Date.now();
-    hideLoading();
-    drawAdmin(list,'Synced '+new Date().toLocaleTimeString('en-GB'));
-  }).catch(function(err){
-    hideLoading();
-    var fallback=localGet();
-    adminCache.results=fallback;
-    drawAdmin(fallback,'Offline — showing local copy ('+(err.message||'error')+')');
-  });
+  if(!isCloudConfigured()){adminCache.results=localGet();drawAdmin(adminCache.results,'Local storage only (cloud not configured)');return;}
+  showLoading('Loading results\u2026');
+  flushQueue().then(function(){return cloudFetch();}).then(function(list){adminCache.results=list;adminCache.lastFetch=Date.now();hideLoading();drawAdmin(list,'Synced '+new Date().toLocaleTimeString('en-GB'));})
+    .catch(function(err){hideLoading();var fallback=localGet();adminCache.results=fallback;drawAdmin(fallback,'Offline \u2014 showing local copy ('+(err.message||'error')+')');});
 }
 
 function drawAdmin(results,syncInfo){
@@ -496,101 +410,41 @@ function drawAdmin(results,syncInfo){
   var avg=done.length?(done.reduce(function(s,r){return s+r.score},0)/done.length).toFixed(1):'—';
   var avgT=done.length?Math.round(done.reduce(function(s,r){return s+r.duration},0)/done.length):0;
   var pctDone=results.length?Math.round(done.length/results.length*100):0;
-  document.getElementById('admin-stats').innerHTML=
-    '<div class="stat-card"><div class="stat-num">'+results.length+'</div><div class="stat-lbl">Started</div></div>'+
-    '<div class="stat-card"><div class="stat-num">'+done.length+' <span style="font-size:13px;color:#A09080">('+pctDone+'%)</span></div><div class="stat-lbl">Completed</div></div>'+
-    '<div class="stat-card"><div class="stat-num">'+avg+'</div><div class="stat-lbl">Avg score</div></div>'+
-    '<div class="stat-card"><div class="stat-num">'+(avgT?Math.floor(avgT/60)+'m '+avgT%60+'s':'—')+'</div><div class="stat-lbl">Avg time</div></div>';
-
+  document.getElementById('admin-stats').innerHTML='<div class="stat-card"><div class="stat-num">'+results.length+'</div><div class="stat-lbl">Started</div></div><div class="stat-card"><div class="stat-num">'+done.length+' <span style="font-size:13px;color:#A09080">('+pctDone+'%)</span></div><div class="stat-lbl">Completed</div></div><div class="stat-card"><div class="stat-num">'+avg+'</div><div class="stat-lbl">Avg score</div></div><div class="stat-card"><div class="stat-num">'+(avgT?Math.floor(avgT/60)+'m '+avgT%60+'s':'—')+'</div><div class="stat-lbl">Avg time</div></div>';
   var pl=document.getElementById('p-list');
   if(!results.length){pl.innerHTML='<div style="color:#A09080;font-size:14px;text-align:center;padding:20px">No participants yet</div>';}
-  else{
-    pl.innerHTML='';
-    results.slice().reverse().forEach(function(r,i){
-      var idx=results.length-1-i;
-      var pct=Math.round(r.score/r.total*100);
-      var row=document.createElement('div');row.className='p-row';
-      row.onclick=function(){showDetail(idx)};
-      row.innerHTML='<div><div class="p-name" style="font-weight:600;font-size:14px;color:#1a1a1a;transition:color .15s">'+escapeHtml(r.name)+'</div><div style="font-size:11px;color:#A09080;margin-top:2px">'+r.date+'</div></div>'+
-        '<div style="display:flex;align-items:center;gap:8px"><div style="font-size:13px;font-weight:700;color:#1a1a1a">'+r.score+'/'+r.total+' <span style="font-weight:400;color:#A09080;font-size:12px">('+pct+'%)</span></div>'+
-        '<span class="badge '+(r.completed?'badge-done':'badge-quit')+'">'+(r.completed?'Completed':'Quit')+'</span></div>';
-      pl.appendChild(row);
-    });
-  }
-
+  else{pl.innerHTML='';results.slice().reverse().forEach(function(r,i){var idx=results.length-1-i;var pct=Math.round(r.score/r.total*100);var row=document.createElement('div');row.className='p-row';row.onclick=function(){showDetail(idx)};row.innerHTML='<div><div class="p-name" style="font-weight:600;font-size:14px;color:#1a1a1a;transition:color .15s">'+escapeHtml(r.name)+'</div><div style="font-size:11px;color:#A09080;margin-top:2px">'+r.date+'</div></div><div style="display:flex;align-items:center;gap:8px"><div style="font-size:13px;font-weight:700;color:#1a1a1a">'+r.score+'/'+r.total+' <span style="font-weight:400;color:#A09080;font-size:12px">('+pct+'%)</span></div><span class="badge '+(r.completed?'badge-done':'badge-quit')+'">'+(r.completed?'Completed':'Quit')+'</span></div>';pl.appendChild(row);});}
   var qa=document.getElementById('q-analysis');qa.innerHTML='';
-  QS.forEach(function(q,qi){
-    var att=results.filter(function(r){return r.answers && r.answers.find(function(a){return a.qIdx===qi})});
-    var cor=results.filter(function(r){return r.answers && r.answers.find(function(a){return a.qIdx===qi&&a.correct})}).length;
-    var pct=att.length?Math.round(cor/att.length*100):0;
-    var d=document.createElement('div');d.className='bar-wrap';
-    d.innerHTML='<div class="bar-label"><span>'+(qi+1)+'. '+escapeHtml(q.q.substring(0,50))+(q.q.length>50?'\u2026':'')+'</span><span style="color:'+DIFF_COLORS[q.diff]+';flex-shrink:0">'+pct+'%</span></div>'+
-      '<div class="bar-track"><div class="bar-fill '+(pct>=60?'g':'')+'" style="width:'+pct+'%"></div></div>'+
-      '<div style="font-size:11px;color:#A09080;margin-top:3px">'+cor+' of '+att.length+' correct \u00B7 '+DIFF_LABELS[q.diff]+'</div>';
-    qa.appendChild(d);
-  });
+  QS.forEach(function(q,qi){var att=results.filter(function(r){return r.answers&&r.answers.find(function(a){return a.qIdx===qi})});var cor=results.filter(function(r){return r.answers&&r.answers.find(function(a){return a.qIdx===qi&&a.correct})}).length;var pct=att.length?Math.round(cor/att.length*100):0;var d=document.createElement('div');d.className='bar-wrap';d.innerHTML='<div class="bar-label"><span>'+(qi+1)+'. '+escapeHtml(q.q.substring(0,50))+(q.q.length>50?'\u2026':'')+'</span><span style="color:'+DIFF_COLORS[q.diff]+';flex-shrink:0">'+pct+'%</span></div><div class="bar-track"><div class="bar-fill '+(pct>=60?'g':'')+'" style="width:'+pct+'%"></div></div><div style="font-size:11px;color:#A09080;margin-top:3px">'+cor+' of '+att.length+' correct \u00B7 '+DIFF_LABELS[q.diff]+'</div>';qa.appendChild(d);});
 }
 
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
 function showDetail(idx){
-  var r=adminCache.results[idx];
-  if(!r)return;
-  document.getElementById('tab-p').classList.remove('active');
-  document.getElementById('tab-q').classList.remove('active');
-  document.querySelector('.tabs').style.display='none';
-  document.getElementById('detail-panel').style.display='block';
-  var pct=Math.round(r.score/r.total*100);
-  var cByD=[0,0,0,0],tByD=[0,0,0,0];
+  var r=adminCache.results[idx];if(!r)return;
+  document.getElementById('tab-p').classList.remove('active');document.getElementById('tab-q').classList.remove('active');document.querySelector('.tabs').style.display='none';document.getElementById('detail-panel').style.display='block';
+  var pct=Math.round(r.score/r.total*100);var cByD=[0,0,0,0],tByD=[0,0,0,0];
   (r.answers||[]).forEach(function(a){var d=QS[a.qIdx].diff;tByD[d]++;if(a.correct)cByD[d]++;});
-  var diffHTML='';
-  [1,2,3].forEach(function(d){if(tByD[d]>0)diffHTML+='<span style="margin-right:12px;font-size:12px;color:'+DIFF_COLORS[d]+'">'+DIFF_LABELS[d]+': '+cByD[d]+'/'+tByD[d]+'</span>';});
-  var html='<div class="tag" style="color:#888">'+escapeHtml(r.name)+'</div>'+
-    '<div style="font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:4px">'+r.score+' / '+r.total+' \u00B7 '+pct+'%</div>'+
-    '<div style="margin-bottom:8px">'+diffHTML+'</div>'+
-    '<div style="font-size:12px;color:#A09080;margin-bottom:12px">'+r.date+' \u00B7 '+Math.floor(r.duration/60)+'m '+r.duration%60+'s \u00B7 '+(r.completed?'completed in full':'quit early')+'</div>'+
-    '<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div><div style="margin-top:16px">';
-  (r.answers||[]).forEach(function(a){
-    var q=QS[a.qIdx];
-    html+='<div class="ans-row"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-size:11px;font-weight:700;color:#A09080;text-transform:uppercase;letter-spacing:.06em">'+q.cat+'</span><span style="font-size:11px;color:'+DIFF_COLORS[q.diff]+'">'+('\u25CF'.repeat(q.diff))+'</span></div>'+
-      '<div style="font-weight:600;font-size:13px;color:#1a1a1a;margin-bottom:4px">'+escapeHtml(q.q)+'</div>'+
-      '<div style="font-size:12px;color:'+(a.correct?'#2D9B5A':'#E24B4A')+'">'+(a.correct?'\u2713':'\u2717')+' '+escapeHtml(q.opts[a.chosen])+(a.correct?'':' \u2192 '+escapeHtml(q.opts[q.ans]))+'</div></div>';
-  });
-  html+='</div>';
-  document.getElementById('detail-content').innerHTML=html;
+  var diffHTML='';[1,2,3].forEach(function(d){if(tByD[d]>0)diffHTML+='<span style="margin-right:12px;font-size:12px;color:'+DIFF_COLORS[d]+'">'+DIFF_LABELS[d]+': '+cByD[d]+'/'+tByD[d]+'</span>';});
+  var html='<div class="tag" style="color:#888">'+escapeHtml(r.name)+'</div><div style="font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:4px">'+r.score+' / '+r.total+' \u00B7 '+pct+'%</div><div style="margin-bottom:8px">'+diffHTML+'</div><div style="font-size:12px;color:#A09080;margin-bottom:12px">'+r.date+' \u00B7 '+Math.floor(r.duration/60)+'m '+r.duration%60+'s \u00B7 '+(r.completed?'completed in full':'quit early')+'</div><div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div><div style="margin-top:16px">';
+  (r.answers||[]).forEach(function(a){var q=QS[a.qIdx];html+='<div class="ans-row"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-size:11px;font-weight:700;color:#A09080;text-transform:uppercase;letter-spacing:.06em">'+q.cat+'</span><span style="font-size:11px;color:'+DIFF_COLORS[q.diff]+'">'+('\u25CF'.repeat(q.diff))+'</span></div><div style="font-weight:600;font-size:13px;color:#1a1a1a;margin-bottom:4px">'+escapeHtml(q.q)+'</div><div style="font-size:12px;color:'+(a.correct?'#2D9B5A':'#E24B4A')+'">'+(a.correct?'\u2713':'\u2717')+' '+escapeHtml(q.opts[a.chosen])+(a.correct?'':' \u2192 '+escapeHtml(q.opts[q.ans]))+'</div></div>';});
+  html+='</div>';document.getElementById('detail-content').innerHTML=html;
 }
 
-function closeDetail(){
-  document.getElementById('detail-panel').style.display='none';
-  document.querySelector('.tabs').style.display='flex';
-  document.getElementById('tab-p').classList.add('active');
-  document.getElementById('tab-btn-p').classList.add('active');
-  document.getElementById('tab-btn-q').classList.remove('active');
-}
-function switchTab(t){
-  ['p','q'].forEach(function(id){
-    document.getElementById('tab-'+id).classList.toggle('active',id===t);
-    document.getElementById('tab-btn-'+id).classList.toggle('active',id===t);
-  });
-}
+function closeDetail(){document.getElementById('detail-panel').style.display='none';document.querySelector('.tabs').style.display='flex';document.getElementById('tab-p').classList.add('active');document.getElementById('tab-btn-p').classList.add('active');document.getElementById('tab-btn-q').classList.remove('active');}
+function switchTab(t){['p','q'].forEach(function(id){document.getElementById('tab-'+id).classList.toggle('active',id===t);document.getElementById('tab-btn-'+id).classList.toggle('active',id===t);});}
 
 function clearData(){
   if(!confirm('Delete ALL results (cloud + local)? This cannot be undone.'))return;
-  localStorage.removeItem('hp_results');
-  localStorage.removeItem('hp_queue');
+  localStorage.removeItem('hp_results');localStorage.removeItem('hp_queue');
   if(!isCloudConfigured()){renderAdmin();return;}
-  showLoading('Clearing cloud…');
-  cloudSave([]).then(function(){
-    hideLoading();renderAdmin(true);
-  }).catch(function(err){
-    hideLoading();
-    alert('Local cleared, but cloud failed: '+(err.message||'unknown error'));
-    renderAdmin();
-  });
+  showLoading('Clearing cloud\u2026');
+  cloudSave([]).then(function(){hideLoading();renderAdmin(true);}).catch(function(err){hideLoading();alert('Local cleared, but cloud failed: '+(err.message||'unknown error'));renderAdmin();});
 }
 
-// Try to flush any offline-queued results when the app loads
 flushQueue();
+document.getElementById('player-name').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();startQuiz();}});
+document.getElementById('admin-pass').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();openAdmin();}});
 </script>
 
 </body>
